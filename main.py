@@ -35,15 +35,14 @@ def main():
         #svuota il file di output prima di cominciare
         print('', file=f)
     
-    batch_sizes = config['train']['batch_size'] #Setting batch size
-    kernel_size = config['train']['kernel_size'] #Setting kernel size
-    lrs = config['train']['lr'] #Setting kernel size
+    batch_sizes = config['train']['batch_size'] #Setting batch sizes
+    kernel_size = config['train']['kernel_size'] #Setting kernel sizes
+    lrs = config['train']['lr'] #Setting kernel sizes
     n_epochs = config['train']['epochs'] #Setting epochs
-    
     
     for batch_size in batch_sizes:
         for lr in lrs:
-            loss_values = []
+            train_loss_values = []
             for epochs in [n_epochs]:
 
                 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=True)
@@ -72,10 +71,13 @@ def main():
                         optimizer.step()
                         running_loss += loss.item()
                     
-                    loss_value = running_loss / len(train_loader)
-                    loss_values.append(loss_value)
+                    # save train loss values
+                    train_loss_value = running_loss / len(train_loader)
+                    train_loss_values.append(train_loss_value)
+                    
                     # display statistics
-                    print(f'[{epoch + 1}, {i + 1:5d}] loss: {loss_value:.5f}')
+                    print(f'Epoch: {epoch + 1} - Numero di batch elaborati: {i + 1}  - Loss: {train_loss_value:.5f}')
+                    
                 PATH = './mymodel.pth'
                 torch.save(clf.state_dict(), PATH)
 
@@ -114,13 +116,13 @@ def main():
             
             # Grafico loss
             plt.figure(figsize=(8, 5))
-            plt.plot(list(range(1,epochs+1)), loss_values, marker='o', linestyle='-', color='b', label='Loss')
+            plt.plot(list(range(1,epochs+1)), train_loss_values, marker='o', linestyle='-', color='b', label='Loss')
             plt.title('Loss durante le epoche')
             plt.xlabel('Epoche')
             plt.ylabel('Loss')
             plt.legend()
             plt.grid(True)
-            plt.savefig(f"C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/loss_graphics/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300)  # Specifica nome, formato e risoluzione
-            plt.close()  # Chiudi la figura per liberare memoria
+            plt.savefig(f"C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/loss_graphics/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300) 
+            plt.close()  
 if __name__ == '__main__':
     main()

@@ -27,7 +27,6 @@ def main():
     # config = load_config(args.cfg)
     config = load_config("config.yaml")
     
-    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     X, Y, max_lenght, n_feature = dataRead(DATAFILE)
     # with open("C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/output.txt", 'w') as f:
@@ -43,6 +42,7 @@ def main():
     for batch_size in batch_sizes:
         for lr in lrs:
             train_loss_values = []
+            test_loss_values = []
             for epochs in [n_epochs]:
 
                 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=True)
@@ -75,54 +75,70 @@ def main():
                     train_loss_value = running_loss / len(train_loader)
                     train_loss_values.append(train_loss_value)
                     
-                    # display statistics
-                    print(f'Epoch: {epoch + 1} - Numero di batch elaborati: {i + 1}  - Loss: {train_loss_value:.5f}')
-                    
+                    test_data = Data(X_test, Y_test)
+                    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=4)
+
+                    # Test loss e accuratezza
+                    test_loss = 0.0  # Aggiungi accumulatore per la test loss
+                    correct, total = 0, 0
+                    all_labels = []
+                    all_predictions = []
+
+                    with torch.no_grad():
+                        for data in test_loader:
+                            inputs, labels = data
+                            inputs, labels = inputs.to(device), labels.to(device)
+                            
+                            # Calcola output
+                            outputs = clf(inputs)
+                            
+                            # Calcola la loss sul test set
+                            loss = criterion(outputs, labels.argmax(dim=1))
+                            test_loss += loss.item()
+                            
+                            # Ottieni le predizioni
+                            predicted = outputs.data.argmax(dim=1)
+                            labels = labels.argmax(dim=1)
+                            
+                            # Aggiorna risultati
+                            total += labels.size(0)
+                            all_predictions.extend(predicted.cpu().numpy())
+                            all_labels.extend(labels.cpu().numpy())
+                            correct += (predicted == labels).sum().item()
+
+                        # Calcola la loss media del test
+                        test_loss_value = test_loss / len(test_loader)
+                        test_loss_values.append(test_loss_value)
+                        
+                        
+                        # display statistics
+                        print(f'Epoch: {epoch + 1} - Number of batches processed: {i + 1}  - Train Loss: {train_loss_value:.5f}, Test Loss: {test_loss_value:.5f}')
+
                 PATH = './mymodel.pth'
                 torch.save(clf.state_dict(), PATH)
-
-                test_data = Data(X_test, Y_test)
-                test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=4)
-
-
-                correct, total = 0, 0
-                all_labels = []
-                all_predictions = []
-                # no need to calculate gradients during inference
-                with torch.no_grad():
-                    for data in test_loader:
-                        inputs, labels = data
-                        inputs, labels = inputs.to(device), labels.to(device)
-                        # calculate output by running through the network
-                        outputs = clf(inputs)
-                        # get the predictions
-                        #__, predicted = torch.max(outputs.data, 1)
-                        predicted = outputs.data.argmax(dim=1)
-                        labels = labels.argmax(dim=1)
-                        # update results
-                        total += labels.size(0)
-                        all_predictions.extend(predicted.cpu().numpy())
-                        all_labels.extend(labels.cpu().numpy())
-                        correct += (predicted == labels).sum()
-                labels = sorted(set(all_labels)) # imposta le label per il report in modo che siano tutte e sole quelle contenute nei dati
-                # with open("C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/output.txt",
-                with open("C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/nostriEsperimenti/output.txt",
-                          'a') as f:
+                
+                # Report e salvataggio su file
+                labels = sorted(set(all_labels))
+                with open("C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/nostriEsperimenti/output.txt", 'a') as f:
+                    print(f"Test Loss: {test_loss_value:.5f}", file=f)
                     print(correct, total, file=f)
-                    print(classification_report(all_labels, all_predictions, labels = labels, target_names=['0', '1', '2', '3', '4', '5', '6', '7', '8',
-                                                                                           '9', '10']), file=f)
-                    print(f'Batch size:{batch_size}, Epochs: {epochs}, lr: {lr}', file = f)
+                    print(classification_report(all_labels, all_predictions, labels=labels, target_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']), file=f)
+                    print(f'Batch size: {batch_size}, Epochs: {epochs}, lr: {lr}', file=f)
                     print('-' * 40, file=f)
+
             
             # Grafico loss
+            # Grafico per training e test loss
             plt.figure(figsize=(8, 5))
-            plt.plot(list(range(1,epochs+1)), train_loss_values, marker='o', linestyle='-', color='b', label='Loss')
+            plt.plot(list(range(1, epochs + 1)), train_loss_values, marker='o', linestyle='-', color='b', label='Train Loss')
+            plt.plot(list(range(1, epochs + 1)), test_loss_values, marker='o', linestyle='--', color='r', label='Test Loss')
             plt.title('Loss durante le epoche')
             plt.xlabel('Epoche')
             plt.ylabel('Loss')
             plt.legend()
             plt.grid(True)
-            plt.savefig(f"C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/loss_graphics/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300) 
-            plt.close()  
+            plt.savefig(f"C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/loss_graphics/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300)
+            plt.close()
+
 if __name__ == '__main__':
     main()

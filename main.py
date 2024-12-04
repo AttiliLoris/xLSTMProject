@@ -9,9 +9,12 @@ from dataset import Data
 from torch.utils.data import DataLoader
 from sklearn.metrics import classification_report
 import argparse
+import os
+import sys
 
-# DATAFILE= 'C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/Helpdesk.xes'
-DATAFILE= 'C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/nostriEsperimenti/Helpdesk.xes'
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_script_dir)
+DATAFILE= 'nostriEsperimenti/Helpdesk.xes'
 
 def load_config(file_path):
     """Funzione per caricare il file YAML di configurazione."""
@@ -30,7 +33,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     X, Y, max_lenght, n_feature = dataRead(DATAFILE)
     # with open("C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/output.txt", 'w') as f:
-    with open("C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/nostriEsperimenti/output.txt", 'w') as f:
+    with open("nostriEsperimenti/output.txt", 'w') as f:
         #svuota il file di output prima di cominciare
         print('', file=f)
     
@@ -119,7 +122,7 @@ def main():
                 
                 # Report e salvataggio su file
                 labels = sorted(set(all_labels))
-                with open("C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/nostriEsperimenti/output.txt", 'a') as f:
+                with open("nostriEsperimenti/output.txt", 'a') as f:
                     print(f"Test Loss: {test_loss_value:.5f}", file=f)
                     print(correct, total, file=f)
                     print(classification_report(all_labels, all_predictions, labels=labels, target_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']), file=f)
@@ -137,7 +140,7 @@ def main():
             plt.ylabel('Loss')
             plt.legend()
             plt.grid(True)
-            plt.savefig(f"C:/Users/alep9/OneDrive/Desktop/UNIVERSITA/Big Data Analytics e Machine Learning/xLSTMProject/loss_graphics/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300)
+            plt.savefig(f"{current_script_dir}/loss_graphics/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300)
             plt.close()
 
 if __name__ == '__main__':

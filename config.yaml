@@ -4,4 +4,4 @@ train:
   batch_size: [32, 64, 16]
   kernel_size: 16
   epochs: 30
-  lr: [0.1, 0.01, 0.001]
+  lr: [0.01, 0.001, 0.1]

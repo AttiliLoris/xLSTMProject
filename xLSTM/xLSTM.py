@@ -5,7 +5,7 @@ from xLSTM.mLSTMblock import mLSTMblock
 from xLSTM.sLSTMblock import sLSTMblock
 
 class xLSTM(nn.Module):
-    def __init__(self, layers, x_example, depth=4, factor=2):
+    def __init__(self, layers, x_example, kernel_size, depth=4, factor=2):
         super(xLSTM, self).__init__()
         self.relu = nn.ReLU()#
         self.layers = nn.ModuleList()
@@ -14,7 +14,7 @@ class xLSTM(nn.Module):
             if layer_type == 's':
                 layer = sLSTMblock(x_example, depth)
             elif layer_type == 'm':
-                layer = mLSTMblock(x_example, factor, depth)
+                layer = mLSTMblock(x_example, factor, depth, kernel_size)
             else:
                 raise ValueError(f"Invalid layer type: {layer_type}. Choose 's' for sLSTM or 'm' for mLSTM.")
             self.layers.append(layer)

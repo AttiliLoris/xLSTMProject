@@ -14,7 +14,7 @@ class mLSTMblock(nn.Module):
         self.left = nn.Linear(self.input_size, self.hidden_size)
         self.right = nn.Linear(self.input_size, self.hidden_size)
         
-        self.conv = CausalConv1D(self.hidden_size, self.hidden_size, 3)#modificato
+        self.conv = CausalConv1D(self.hidden_size, self.hidden_size, 16)#modificato
         self.drop = nn.Dropout(dropout+0.1)
         
         self.lskip = nn.Linear(self.hidden_size, self.hidden_size)

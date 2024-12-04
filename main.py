@@ -11,14 +11,15 @@ DATAFILE= 'C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimen
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     X, Y, max_lenght, n_feature = dataRead(DATAFILE)
+    with open("C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/output.txt", 'w') as f:
+        #svuota il file di output prima di cominciare
+        print('', file=f)
     for batch_size in [32,64]:
-        for lr in [0.001, 0.01, 0.1]:
-            for epochs in [200]:
+        for lr in [0.01, 0.001, 0.1]:
+            for epochs in [30]:
 
                 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=True)
                 train_data = Data(X_train, Y_train)
-                with open("C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/output.txt", 'w') as f:
-                    print(train_data[0], file=f)
                 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=4)
                 x_example = torch.zeros(batch_size, max_lenght, n_feature).to(device)
                 clf = xlstm('m', x_example, factor=1).to(device)
@@ -72,7 +73,7 @@ def main():
                         correct += (predicted == labels).sum()
                 labels = sorted(set(all_labels)) # imposta le lables per il report in modo che siano tutte e sole quelle contenute nei dati
                 with open("C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/output.txt",
-                          'w') as f:
+                          'a') as f:
                     print(correct, total, file=f)
                     print(classification_report(all_labels, all_predictions, labels = labels, target_names=['0', '1', '2', '3', '4', '5', '6', '7', '8',
                                                                                            '9', '10']), file=f)

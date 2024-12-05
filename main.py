@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import torch
 import torch.nn as nn
 import yaml
+from utils import print_plot
 from xLSTM.xLSTM import xLSTM as xlstm
 from sklearn.model_selection import train_test_split
 from nostriEsperimenti.letturaDati import dataRead
@@ -32,7 +33,7 @@ def main():
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     X, Y, max_lenght, n_feature = dataRead(DATAFILE)
-    # with open("C:/Users/loris/PycharmProjects/xLSTM-pytorch/examples/nostriEsperimenti/output.txt", 'w') as f:
+    
     with open("nostriEsperimenti/output.txt", 'w') as f:
         #svuota il file di output prima di cominciare
         print('', file=f)
@@ -43,16 +44,19 @@ def main():
     n_epochs = config['train']['epochs'] #Setting epochs
     
     for batch_size in batch_sizes:
+        
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=True)
+        train_data = Data(X_train, Y_train)
+        train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=4)
+        x_example = torch.zeros(batch_size, max_lenght, n_feature).to(device)
+        clf = xlstm('m', x_example, kernel_size, factor=1).to(device)
+
         for lr in lrs:
+            
             train_loss_values = []
             test_loss_values = []
+            
             for epochs in [n_epochs]:
-
-                X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=True)
-                train_data = Data(X_train, Y_train)
-                train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=4)
-                x_example = torch.zeros(batch_size, max_lenght, n_feature).to(device)
-                clf = xlstm('m', x_example, kernel_size, factor=1).to(device)
 
                 criterion = nn.CrossEntropyLoss()
                 optimizer = torch.optim.SGD(clf.parameters(), lr=lr)
@@ -129,19 +133,19 @@ def main():
                     print(f'Batch size: {batch_size}, Epochs: {epochs}, lr: {lr}', file=f)
                     print('-' * 40, file=f)
 
-            
-            # Grafico loss
             # Grafico per training e test loss
-            plt.figure(figsize=(8, 5))
-            plt.plot(list(range(1, epochs + 1)), train_loss_values, marker='o', linestyle='-', color='b', label='Train Loss')
-            plt.plot(list(range(1, epochs + 1)), test_loss_values, marker='o', linestyle='--', color='r', label='Test Loss')
-            plt.title('Loss durante le epoche')
-            plt.xlabel('Epoche')
-            plt.ylabel('Loss')
-            plt.legend()
-            plt.grid(True)
-            plt.savefig(f"{current_script_dir}/loss_graphics/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300)
-            plt.close()
+            print_plot(epochs, train_loss_values, test_loss_values, batch_size, lr, current_script_dir)
+            
+            # plt.figure(figsize=(8, 5))
+            # plt.plot(list(range(1, epochs + 1)), train_loss_values, marker='o', linestyle='-', color='b', label='Train Loss')
+            # plt.plot(list(range(1, epochs + 1)), test_loss_values, marker='o', linestyle='--', color='r', label='Test Loss')
+            # plt.title('Loss durante le epoche')
+            # plt.xlabel('Epoche')
+            # plt.ylabel('Loss')
+            # plt.legend()
+            # plt.grid(True)
+            # plt.savefig(f"{current_script_dir}/loss_plot/grafico_loss_{batch_size}_{lr}.png", format='png', dpi=300)
+            # plt.close()
 
 if __name__ == '__main__':
     main()

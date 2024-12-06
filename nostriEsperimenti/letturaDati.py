@@ -4,7 +4,7 @@ import pandas
 import pm4py
 import numpy as np
 
-from .funzioni import transform_vector
+from .funzioni import transform_vector2
 
 
 def dataRead(datafile):
@@ -17,16 +17,21 @@ def dataRead(datafile):
 
     # converte il log in dataframe per utilizzare i metodi del dataframe
     df = pm4py.convert_to_dataframe(log)
+
     # Trova il massimo e il minimo della colonna time:timestamp
     max_time = df['time:timestamp'].max().to_pydatetime().timestamp()
     min_time = df['time:timestamp'].min().to_pydatetime().timestamp()
-    n_feature = 12
+    # AAAA numeric_values = pandas.to_numeric(df['concept:name'], errors='coerce')
+
+    # Calcola il massimo ignorando i NaN (che corrispondono a valori non numerici)
+    #AAAAAn_feature = int(numeric_values.max()) + 3
+    n_feature = 27
+
     # denominatore della standardizzazione
     standard_time = max_time - min_time
 
     # proiezione del log sull'identificatore dell'attività e il timestamp
     log = pm4py.project_on_event_attribute(log, ["concept:name", "time:timestamp"])
-
     # calcolo lunghezza massima delle tracce e numero prefissi da generare
     trace_max_length = 0
     prefix_num = 0
@@ -48,7 +53,7 @@ def dataRead(datafile):
 
     # trasformazione degli eventi con onehot encoding e stardandizzazione del timestamp
     for i in range(len(log)):
-        log[i] = transform_vector(log[i], standard_time, trace_max_length)
+        log[i] = transform_vector2(log[i], standard_time, trace_max_length, n_feature)
     # creazione dei vettori di prefissi e maschere di predizione
     res = np.zeros((prefix_num, trace_max_length, n_feature)).astype(int)
     prediction_mask = np.zeros((prefix_num, n_feature-1)).astype(int)

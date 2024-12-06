@@ -15,7 +15,7 @@ import sys
 
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_script_dir)
-DATAFILE= 'nostriEsperimenti/Helpdesk.xes'
+DATAFILE= 'nostriEsperimenti/BPI12.xes'
 
 def load_config(file_path):
     """Funzione per caricare il file YAML di configurazione."""
@@ -45,11 +45,11 @@ def main():
     
     for batch_size in batch_sizes:
         
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=True)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=False)
         train_data = Data(X_train, Y_train)
-        train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=4)
+        train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=False, num_workers=4)
         x_example = torch.zeros(batch_size, max_lenght, n_feature).to(device)
-        clf = xlstm('m', x_example, kernel_size, factor=1).to(device)
+        clf = xlstm('m', x_example, max_lenght, factor=1).to(device)
 
         for lr in lrs:
             
@@ -83,7 +83,7 @@ def main():
                     train_loss_values.append(train_loss_value)
                     
                     test_data = Data(X_test, Y_test)
-                    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=4)
+                    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False, num_workers=4)
 
                     # Test loss e accuratezza
                     test_loss = 0.0  # Aggiungi accumulatore per la test loss
@@ -129,7 +129,8 @@ def main():
                 with open("nostriEsperimenti/output.txt", 'a') as f:
                     print(f"Test Loss: {test_loss_value:.5f}", file=f)
                     print(correct, total, file=f)
-                    print(classification_report(all_labels, all_predictions, labels=labels, target_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']), file=f)
+                    print(classification_report(all_labels, all_predictions, labels=labels, target_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12',
+                                                                                                          '13','14','15','16','17','18','19','20','21','22','23','24','25','26']), file=f)
                     print(f'Batch size: {batch_size}, Epochs: {epochs}, lr: {lr}', file=f)
                     print('-' * 40, file=f)
 

@@ -48,8 +48,8 @@ class mLSTMblock(nn.Module):
         self.init_states(x_example)
     
     def init_states(self, x_example):
-        self.ct_1 = torch.zeros([self.bs, 16, self.hidden_size], device=x_example.device)
-        self.nt_1 = torch.zeros([self.bs, 16, self.hidden_size], device=x_example.device)
+        self.ct_1 = torch.zeros([self.bs, 98, self.hidden_size], device=x_example.device)
+        self.nt_1 = torch.zeros([self.bs, 98, self.hidden_size], device=x_example.device)
     
     def forward(self, x):
         assert x.ndim == 3

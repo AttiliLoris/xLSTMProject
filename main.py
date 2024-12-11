@@ -49,7 +49,7 @@ def main():
         train_data = Data(X_train, Y_train)
         train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=False, num_workers=4)
         x_example = torch.zeros(batch_size, max_lenght, n_feature).to(device)
-        clf = xlstm('m', x_example, max_lenght, factor=1).to(device)
+        clf = xlstm(['m','m','m'], x_example, max_lenght, factor=1).to(device)
 
         for lr in lrs:
             
@@ -60,7 +60,6 @@ def main():
 
                 criterion = nn.CrossEntropyLoss()
                 optimizer = torch.optim.SGD(clf.parameters(), lr=lr)
-
                 for epoch in range(epochs):
                     running_loss = 0.0
                     for i, data in enumerate(train_loader, 0):
@@ -121,15 +120,12 @@ def main():
                         # display statistics
                         print(f'Epoch: {epoch + 1} - Number of batches processed: {i + 1}  - Train Loss: {train_loss_value:.5f}, Test Loss: {test_loss_value:.5f}')
 
-                PATH = './mymodel.pth'
-                torch.save(clf.state_dict(), PATH)
-                
                 # Report e salvataggio su file
                 labels = sorted(set(all_labels))
                 with open("nostriEsperimenti/output.txt", 'a') as f:
                     print(f"Test Loss: {test_loss_value:.5f}", file=f)
                     print(correct, total, file=f)
-                    print(classification_report(all_labels, all_predictions, labels=labels, target_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12',
+                    print(classification_report(all_labels, all_predictions, labels=labels, target_names=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12',
                                                                                                           '13','14','15','16','17','18','19','20','21','22','23','24','25','26']), file=f)
                     print(f'Batch size: {batch_size}, Epochs: {epochs}, lr: {lr}', file=f)
                     print('-' * 40, file=f)

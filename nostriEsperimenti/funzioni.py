@@ -107,6 +107,6 @@ def transform_vector2(array, max_time, row=100, col=12):
                 new_array[i][25] = 1
             # case _:
             #     new_array
-        #new_array[i][11] = Decimal(array[i][1] / max_time)
-        new_array[i][26] = array[i][1]
+        new_array[i][26] = Decimal(array[i][1] / max_time)
+        #new_array[i][26] = array[i][1]
     return new_array

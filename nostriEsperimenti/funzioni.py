@@ -110,3 +110,14 @@ def transform_vector2(array, max_time, row=100, col=12):
         new_array[i][26] = Decimal(array[i][1] / max_time)
         #new_array[i][26] = array[i][1]
     return new_array
+
+def transform_vector3(array, max_time, row=100, col=12, lista_eventi=None):
+    new_array = np.zeros((row, col))
+    #getcontext().prec = 50
+    for i in range(len(array)):
+        for k in range(len(lista_eventi)):
+            if (array[i][0] == lista_eventi[k]):
+                new_array[i][k] = 1
+                break
+        new_array[i][len(lista_eventi)] = Decimal(array[i][1] / max_time)
+    return new_array

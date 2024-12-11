@@ -3,5 +3,7 @@ version: 1.0
 train:
   batch_size: [32]
   kernel_size: 98
-  epochs: 10
+  epochs: 30
   lr: [0.01, 0,001, 0,1]
+dataset:
+  path: nostriEsperimenti/BPI12.xes

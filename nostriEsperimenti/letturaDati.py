@@ -3,7 +3,7 @@ from typing import Optional
 import pandas
 import pm4py
 import numpy as np
-
+import xml.etree.ElementTree as ET
 from .funzioni import transform_vector2
 
 
@@ -25,7 +25,12 @@ def dataRead(datafile):
 
     # Calcola il massimo ignorando i NaN (che corrispondono a valori non numerici)
     #AAAAAn_feature = int(numeric_values.max()) + 3
-    n_feature = 27
+    
+    # calcola il numero di feature dai metadati
+    tree = ET.parse(datafile)
+    root = tree.getroot()
+    named_events_total = root.find(".//int[@key='meta_concept:named_events_total']")
+    n_feature = len(named_events_total) + 3 #+3 per comprendere START, END e timestamp
 
     # denominatore della standardizzazione
     standard_time = max_time - min_time
@@ -40,6 +45,8 @@ def dataRead(datafile):
         if len(log[i]) > trace_max_length:
             trace_max_length = len(log[i])
         prefix_num += len(log[i]) - 1
+    
+    
 
     # conversione dei timestamp in interi
     for i in range(len(log)):

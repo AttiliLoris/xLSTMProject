@@ -11,7 +11,7 @@ class sLSTMblock(nn.Module):
         
         self.ln = nn.LayerNorm(self.input_size)
         
-        self.conv = CausalConv1D(self.input_size, self.input_size, int(self.input_size/8))
+        self.conv = CausalConv1D(self.input_size, self.input_size, x_example.shape[1])
         self.drop = nn.Dropout(dropout)
         
         self.i_gate = BlockDiagonal(self.input_size, self.input_size, depth)
@@ -34,20 +34,20 @@ class sLSTMblock(nn.Module):
         self.ln_n = nn.LayerNorm(self.input_size)
         self.ln_h = nn.LayerNorm(self.input_size)
         
-        self.left_linear = nn.Linear(self.input_size, int(self.input_size*(4/3)))
-        self.right_linear = nn.Linear(self.input_size, int(self.input_size*(4/3)))
+        self.left_linear = nn.Linear(self.input_size, int(self.input_size*(3/3)))
+        self.right_linear = nn.Linear(self.input_size, int(self.input_size*(3/3)))
 
-        self.ln_out = nn.LayerNorm(int(self.input_size*(4/3)))
+        self.ln_out = nn.LayerNorm(int(self.input_size*(3/3)))
         
-        self.proj = nn.Linear(int(self.input_size*(4/3)), self.input_size)
+        self.proj = nn.Linear(int(self.input_size*(3/3)), self.input_size)
         
         self.init_states(x_example)
         
     def init_states(self, x):
-        self.nt_1 = torch.zeros(1, 1, x.shape[2], device=x.device)
-        self.ct_1 = torch.zeros(1, 1, x.shape[2], device=x.device)
-        self.ht_1 = torch.zeros(1, 1, x.shape[2], device=x.device)
-        self.mt_1 = torch.zeros(1, 1, x.shape[2], device=x.device)
+        self.nt_1 = torch.zeros(x.shape[0], x.shape[1], x.shape[2], device=x.device)
+        self.ct_1 = torch.zeros(x.shape[0], x.shape[1], x.shape[2], device=x.device)
+        self.ht_1 = torch.zeros(x.shape[0], x.shape[1], x.shape[2], device=x.device)
+        self.mt_1 = torch.zeros(x.shape[0], x.shape[1], x.shape[2], device=x.device)
         
     def forward(self, x):
         x = self.ln(x)

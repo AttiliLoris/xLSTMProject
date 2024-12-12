@@ -4,7 +4,6 @@ import pandas
 import pm4py
 import numpy as np
 import xml.etree.ElementTree as ET
-from .funzioni import transform_vector2
 from .funzioni import transform_vector3
 
 
@@ -23,8 +22,8 @@ def dataRead(datafile):
     unique_values = df["concept:name"].unique()
 
     # Converti in una lista se necessario
-    lista_nomi_eventi = unique_values.tolist()
-    n_feature = len(lista_nomi_eventi) +1  # +1 per comprendere START, END e timestamp
+    activity_names = unique_values.tolist()
+    n_feature = len(activity_names) +1  # +1 per comprendere START, END e timestamp
 
 
     # Trova il massimo e il minimo della colonna time:timestamp
@@ -49,12 +48,11 @@ def dataRead(datafile):
     trace_max_length = 0
     prefix_num = 0
 
+    #calcola la lunghezza massima di una traccia e il numero di prefissi che potranno essere generati
     for i in range(len(log)):
         if len(log[i]) > trace_max_length:
             trace_max_length = len(log[i])
         prefix_num += len(log[i]) - 1
-    
-    
 
     # conversione dei timestamp in interi
     for i in range(len(log)):
@@ -63,17 +61,14 @@ def dataRead(datafile):
                 if isinstance(log[i][j][k], pandas.Timestamp):
                     log[i][j][k] = log[i][j][k].to_pydatetime().timestamp() - min_time
 
-
-
-
     # trasformazione degli eventi con onehot encoding e stardandizzazione del timestamp
     for i in range(len(log)):
         #log[i] = transform_vector2(log[i], standard_time, trace_max_length, n_feature)
-        log[i] = transform_vector3(log[i], standard_time, trace_max_length, n_feature, lista_nomi_eventi)
+        log[i] = transform_vector3(log[i], standard_time, trace_max_length, n_feature, activity_names)
 
     # creazione dei vettori di prefissi e maschere di predizione
-    res = np.zeros((prefix_num, trace_max_length, n_feature)).astype(int)
-    prediction_mask = np.zeros((prefix_num, n_feature-1)).astype(int)
+    res = np.zeros((prefix_num, trace_max_length, n_feature), dtype=np.double)
+    prediction_mask = np.zeros((prefix_num, n_feature-1), dtype=np.double)
     index = 0
     for i in range(len(log)):
         for j in range(trace_max_length - 1, 0, -1):  # cicla fino a rimuovere il primo elemento(escluso, i prefissi minimi hanno lo start)
@@ -85,7 +80,7 @@ def dataRead(datafile):
             y = np.delete(y, -1)
             prediction_mask[index] = y
             index += 1
-    return res, prediction_mask, trace_max_length, n_feature
+    return res, prediction_mask, trace_max_length, n_feature, activity_names
 
 
 ''' analizzando le righe possiamo vedere che alcune colonne non sono utili per ML:

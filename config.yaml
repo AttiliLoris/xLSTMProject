@@ -2,8 +2,9 @@ name: xLSTMProject
 version: 1.0
 train:
   batch_size: [32, 64]
-  kernel_size: 98
   epochs: 10
+  layers_set_list: ['mmmm']
   lr: [0.01, 0,001, 0,1]
+  depth_range: [1,2,3,4,5,6]
 dataset:
-  path: nostriEsperimenti/Helpdesk.xes
+  path: nostriEsperimenti/BPI12.xes

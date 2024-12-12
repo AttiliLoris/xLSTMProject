@@ -1,1 +1,35 @@
 
+Correct:  44115 |  Total:  58606
+                             precision    recall  f1-score   support
+
+                 ASUBMITTED       1.00      1.00      1.00      4287
+           APARTLYSUBMITTED       1.00      1.00      1.00      4244
+               APREACCEPTED       0.51      0.91      0.66      2455
+                  AACCEPTED       0.00      0.00      0.00      1692
+                  OSELECTED       0.71      0.72      0.71      2343
+                 AFINALIZED       0.81      0.70      0.75      1645
+                   OCREATED       0.99      0.98      0.99      2291
+                      OSENT       0.99      0.99      0.99      2354
+       WCompleterenaanvraag       0.71      0.98      0.82      7828
+          WNabellenoffertes       0.76      0.97      0.86      7568
+                  OSENTBACK       0.00      0.00      0.00      1158
+                AREGISTERED       0.36      0.01      0.01       768
+                  AAPPROVED       0.25      0.09      0.13       786
+                  OACCEPTED       0.35      0.09      0.14       737
+                 AACTIVATED       0.32      0.75      0.45       715
+         WValiderenaanvraag       0.64      0.63      0.63      2601
+                        END       0.83      0.91      0.87      4359
+                 OCANCELLED       0.84      0.39      0.54      1214
+                  ADECLINED       0.38      0.06      0.10      2599
+                 ACANCELLED       0.56      0.13      0.21       938
+           WAfhandelenleads       0.55      0.18      0.27      1926
+                  ODECLINED       0.00      0.00      0.00       274
+WNabellenincompletedossiers       0.64      0.93      0.76      3722
+          WBeoordelenfraude       0.00      0.00      0.00       102
+
+                   accuracy                           0.75     58606
+                  macro avg       0.55      0.52      0.50     58606
+               weighted avg       0.70      0.75      0.70     58606
+
+Batch size: 32, Epochs: 10, lr: 0.01, Layers: mmmm, Depth: 1
+----------------------------------------

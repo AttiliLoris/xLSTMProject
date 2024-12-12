@@ -1,5 +1,3 @@
-from decimal import Decimal, getcontext
-
 import numpy as np
 import yaml
 
@@ -10,15 +8,14 @@ def load_config(file_path):
     with open(file_path, "r") as file:
         return yaml.safe_load(file)
 
-def max_divisor(n):
-    for d in (6, 5, 4, 3, 2):
+def max_divisor(n, range):
+    for d in range:
         if n % d == 0:
             return d
     return 1
 
 def transform_vector3(array, max_time, row=100, col=12, lista_eventi=None):
     new_array = np.zeros((row, col), dtype=np.double)
-    #getcontext().prec = 50
     for i in range(len(array)):
         for k in range(len(lista_eventi)):
             if (array[i][0] == lista_eventi[k]):

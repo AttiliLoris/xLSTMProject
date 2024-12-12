@@ -80,6 +80,10 @@ def dataRead(datafile):
             y = np.delete(y, -1)
             prediction_mask[index] = y
             index += 1
+    count = 0
+    for i in range(len(prediction_mask)):
+        if prediction_mask[i][4] == 1:
+            count+=1
     return res, prediction_mask, trace_max_length, n_feature, activity_names
 
 

@@ -26,8 +26,6 @@ class xLSTM(nn.Module):
     def forward(self, x):
         x_original = x.clone()
         for l in self.layers:
-            #projector = nn.Linear(x_original.shape[2], l(x).shape[2]).to(self.device)
-            #x_original = projector(x_original)
             x = l(x) + x_original
         x = self.activation(x)
         x = self.linear(x[:,-1,:])

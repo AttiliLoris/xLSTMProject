@@ -9,6 +9,8 @@ from nostriEsperimenti.letturaDati import dataRead
 from dataset import Data
 from torch.utils.data import DataLoader
 from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+import time
 import os
 import sys
 from nostriEsperimenti.funzioni import load_config, max_divisor
@@ -28,20 +30,19 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     DATAFILE= config['dataset']['path']
-    X, Y, max_lenght, n_feature, activity_names= dataRead(DATAFILE)
+    X, Y, max_lenght, n_feature, activity_names = dataRead(DATAFILE)
 
 
     with open("nostriEsperimenti/output.txt", 'w') as f:
         #svuota il file di output prima di cominciare
         print('', file=f)
-        
-    DATAFILE= config['train']['batch_size']
+
     batch_sizes = config['train']['batch_size'] #Setting batch sizes
     lrs = config['train']['lr'] #Setting kernel sizes
     n_epochs = config['train']['epochs'] #Setting epochs
     layers_set_list = config['train']['layers_set_list']
     depth_range = config['train']['depth_range']
-
+    indice_test = 0
     for layers_set in layers_set_list:
         for batch_size in batch_sizes:
 
@@ -53,15 +54,20 @@ def main():
 
 
             for lr in lrs:
+                indice_test += 1
                 clf = xlstm(layers_set, x_example, max_lenght, depth=depth, factor=1).to(device)
                 train_loss_values = []
                 test_loss_values = []
 
                 for epochs in [n_epochs]:
+                    patience = 10  # Numero massimo di epoche senza miglioramenti
+                    best_loss = float('inf')  # Inizializza la migliore loss con un valore molto alto
+                    early_stop_counter = 0  # Contatore delle epoche senza miglioramento
 
                     criterion = nn.CrossEntropyLoss()
                     optimizer = torch.optim.SGD(clf.parameters(), lr=lr)
                     for epoch in range(epochs):
+                        time.sleep(5)
                         running_loss = 0.0
                         for i, data in enumerate(train_loader, 0):
                             inputs, labels = data
@@ -121,17 +127,32 @@ def main():
                             # display statistics
                             print(f'Epoch: {epoch + 1} - Number of batches processed: {i + 1}  - Train Loss: {train_loss_value:.5f}, Test Loss: {test_loss_value:.5f}')
 
+                        if test_loss_value < best_loss:
+                            best_loss = test_loss_value  # Aggiorna la migliore loss
+                            early_stop_counter = 0  # Resetta il contatore
+                        else:
+                            early_stop_counter += 1  # Incrementa il contatore
+
+                        if early_stop_counter >= patience:
+                            print(f"Early stopping at epoch {epoch + 1}. Best Test Loss: {best_loss:.5f}")
+                            break
+
+
                     # Report e salvataggio su file
                     labels = sorted(set(all_labels))
+                    cm = confusion_matrix(all_labels, all_predictions, labels=labels)
+
                     with open("nostriEsperimenti/output.txt", 'a') as f:
+                        print("Test numero ", indice_test, file=f)
                         print('Correct: ', correct,'|  Total: ', total, file=f)
                         print(classification_report(all_labels, all_predictions, labels=labels, target_names=activity_names[1:]), file=f)
+                        print(cm, file=f)
                         print(f'Batch size: {batch_size}, Epochs: {epochs}, lr: {lr}, Layers: {layers_set}, Depth: {depth}', file=f)
                         print('-' * 40, file=f)
 
                 # Grafico per training e test loss
-                print_plot(epochs, train_loss_values, test_loss_values, batch_size, lr, current_script_dir)
-            
+                print_plot(epochs, train_loss_values, test_loss_values, batch_size, lr, current_script_dir, layers_set, depth)
+
 
 if __name__ == '__main__':
     main()

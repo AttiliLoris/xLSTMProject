@@ -21,7 +21,7 @@ def dataRead(datafile):
     # Ottieni i valori distinti di concept:name
     unique_values = df["concept:name"].unique()
 
-    # Converti in una lista se necessario
+    # Converti in una lista
     activity_names = unique_values.tolist()
     n_feature = len(activity_names) +1  # +1 per comprendere START, END e timestamp
 
@@ -34,10 +34,10 @@ def dataRead(datafile):
     # Calcola il massimo ignorando i NaN (che corrispondono a valori non numerici)
     #AAAAAn_feature = int(numeric_values.max()) + 3
     
-    # calcola il numero di feature dai metadati
+    ''' # calcola il numero di feature dai metadati
     tree = ET.parse(datafile)
     root = tree.getroot()
-    named_events_total = root.find(".//int[@key='meta_concept:named_events_total']")
+    named_events_total = root.find(".//int[@key='meta_concept:named_events_total']")'''
 
     # denominatore della standardizzazione
     standard_time = max_time - min_time
@@ -80,10 +80,6 @@ def dataRead(datafile):
             y = np.delete(y, -1)
             prediction_mask[index] = y
             index += 1
-    count = 0
-    for i in range(len(prediction_mask)):
-        if prediction_mask[i][4] == 1:
-            count+=1
     return res, prediction_mask, trace_max_length, n_feature, activity_names
 
 

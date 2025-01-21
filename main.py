@@ -5,7 +5,7 @@ import yaml
 from utils import print_plot
 from xLSTM.xLSTM import xLSTM as xlstm
 from sklearn.model_selection import train_test_split
-from nostriEsperimenti.letturaDati import dataRead
+from data.data_read import dataRead
 from dataset import Data
 from torch.utils.data import DataLoader
 from sklearn.metrics import classification_report
@@ -13,7 +13,7 @@ from sklearn.metrics import confusion_matrix
 import time
 import os
 import sys
-from nostriEsperimenti.funzioni import load_config, max_divisor
+from data.functions import load_config, max_divisor
 
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_script_dir)
@@ -33,7 +33,7 @@ def main():
     X, Y, max_lenght, n_feature, activity_names = dataRead(DATAFILE)
 
 
-    with open("nostriEsperimenti/output.txt", 'w') as f:
+    with open("output.txt", 'w') as f:
         #svuota il file di output prima di cominciare
         print('', file=f)
 
@@ -142,7 +142,7 @@ def main():
                     labels = sorted(set(all_labels))
                     cm = confusion_matrix(all_labels, all_predictions, labels=labels)
 
-                    with open("nostriEsperimenti/output.txt", 'a') as f:
+                    with open("output.txt", 'a') as f:
                         print("Test numero ", indice_test, file=f)
                         print('Correct: ', correct,'|  Total: ', total, file=f)
                         print(classification_report(all_labels, all_predictions, labels=labels, target_names=activity_names[1:]), file=f)

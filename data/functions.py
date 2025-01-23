@@ -1,8 +1,6 @@
 import numpy as np
 import yaml
 
-
-#funzione che manipola gli eventi implementando il one hot encoding e standardizzando il timestamp
 def load_config(file_path):
     """Funzione per caricare il file YAML di configurazione."""
     with open(file_path, "r") as file:
@@ -14,7 +12,8 @@ def max_divisor(n, range):
             return d
     return 1
 
-def transform_vector3(array, max_time, row=100, col=12, lista_eventi=None):
+#funzione che manipola gli eventi implementando il one hot encoding e standardizzando il timestamp
+def transform_vector(array, max_time, row=100, col=12, lista_eventi=None):
     new_array = np.zeros((row, col), dtype=np.double)
     for i in range(len(array)):
         for k in range(len(lista_eventi)):

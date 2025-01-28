@@ -1,7 +1,7 @@
 name: xLSTMProject
 version: 1.0
 train:
-  batch_size: [64]
+  batch_size: [32,64]
   epochs: 80
   layers_set_list: ['mmmmm','mmm']
   lr: [0.01, 0.02, 0.001]

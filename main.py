@@ -1,7 +1,5 @@
-from matplotlib import pyplot as plt
 import torch
 import torch.nn as nn
-import yaml
 from utils import print_plot
 from xLSTM.xLSTM import xLSTM as xlstm
 from sklearn.model_selection import train_test_split

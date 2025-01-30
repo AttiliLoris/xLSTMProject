@@ -1,9 +1,6 @@
-from typing import Optional
-
 import pandas
 import pm4py
 import numpy as np
-import xml.etree.ElementTree as ET
 from .functions import transform_vector
 
 

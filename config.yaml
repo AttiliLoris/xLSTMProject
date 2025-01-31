@@ -7,4 +7,4 @@ train:
   lr: [0.01, 0.02, 0.001]
   depth_range: [7,6,5,4,3,2,1] #deve essere scritto in ordine decrescente
 dataset:
-  path: nostriEsperimenti/BPI12.xes
+  name: BPI12.xes

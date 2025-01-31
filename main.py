@@ -23,23 +23,24 @@ def main():
     # parser.add_argument("--cfg", type=str, required=True, help="Percorso del file di configurazione YAML")
     # args = parser.parse_args()
     # config = load_config(args.cfg)
+    
     config = load_config("config.yaml")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    DATAFILE= config['dataset']['path']
+    DATAFILE= "data/dataset/" + config['dataset']['name']
     X, Y, max_lenght, n_feature, activity_names = dataRead(DATAFILE)
 
 
     with open("output.txt", 'w') as f:
-        #svuota il file di output prima di cominciare
+        # Svuota il file di output prima di cominciare
         print('', file=f)
 
-    batch_sizes = config['train']['batch_size'] #Setting batch sizes
-    lrs = config['train']['lr'] #Setting kernel sizes
-    n_epochs = config['train']['epochs'] #Setting epochs
-    layers_set_list = config['train']['layers_set_list']
-    depth_range = config['train']['depth_range']
+    batch_sizes = config['train']['batch_size'] # Setting batch sizes
+    lrs = config['train']['lr'] # Setting kernel sizes
+    n_epochs = config['train']['epochs'] # Setting epochs
+    layers_set_list = config['train']['layers_set_list'] # Setting layers
+    depth_range = config['train']['depth_range'] # Setting depth size
     indice_test = 0
     for layers_set in layers_set_list:
         for batch_size in batch_sizes:
@@ -90,7 +91,7 @@ def main():
                         test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=4)
 
                         # Test loss e accuratezza
-                        test_loss = 0.0  # Aggiungi accumulatore per la test loss
+                        test_loss = 0.0  # Aggiunge accumulatore per la test loss
                         correct, total = 0, 0
                         all_labels = []
                         all_predictions = []

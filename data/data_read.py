@@ -20,16 +20,10 @@ def dataRead(datafile):
     activity_names = unique_values.tolist()
     n_feature = len(activity_names) +1  # +1 per comprendere START, END e timestamp
 
-
     # Trova il massimo e il minimo della colonna time:timestamp
     max_time = df['time:timestamp'].max().to_pydatetime().timestamp()
     min_time = df['time:timestamp'].min().to_pydatetime().timestamp()
     # AAAA numeric_values = pandas.to_numeric(df['concept:name'], errors='coerce')
-
-    # Calcola il massimo ignorando i NaN (che corrispondono a valori non numerici)
-    #AAAAAn_feature = int(numeric_values.max()) + 3
-    
-    
 
     # denominatore della standardizzazione
     standard_time = max_time - min_time
@@ -39,12 +33,24 @@ def dataRead(datafile):
     # calcolo lunghezza massima delle tracce e numero prefissi da generare
     trace_max_length = 0
     prefix_num = 0
-
-    #calcola la lunghezza massima di una traccia e il numero di prefissi che potranno essere generati
+    count_trace_len = 0
+    
+    # calcola la lunghezza massima di una traccia e il numero di prefissi che potranno essere generati
     for i in range(len(log)):
+        count_trace_len += len(log[i])
         if len(log[i]) > trace_max_length:
             trace_max_length = len(log[i])
         prefix_num += len(log[i]) - 1
+        
+    # Informazioni sul dataset
+    with open("dataset_info.txt", 'w') as f:
+        print('', file=f)
+    with open("dataset_info.txt", 'a') as f:
+        print("Dataset:", datafile[13:], file = f)
+        print("Numero tracce:", len(log), file = f)
+        print("Numero eventi totali:", count_trace_len, file = f)
+        print("Numero medio di eventi per traccia:", count_trace_len/len(log), file = f)
+        print("Numero attivita' da predire:", len(activity_names), file = f)
 
     # conversione dei timestamp in interi
     for i in range(len(log)):
@@ -72,5 +78,3 @@ def dataRead(datafile):
             prediction_mask[index] = y
             index += 1
     return res, prediction_mask, trace_max_length, n_feature, activity_names
-
-

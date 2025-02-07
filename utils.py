@@ -1,6 +1,5 @@
 from matplotlib import pyplot as plt
 
-
 def print_plot(epochs, train_loss_values, test_loss_values, batch_size, lr, current_script_dir, layers_set, depth):
     plt.figure(figsize=(8, 5))
     plt.plot(list(range(1, epochs + 1)), train_loss_values, marker='o', linestyle='-', color='b', label='Train Loss')

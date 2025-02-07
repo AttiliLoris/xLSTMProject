@@ -47,7 +47,7 @@ def main():
 
             X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, shuffle=True)
             train_data = Data(X_train, Y_train)
-            train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=4)
+            train_loader = DataLoader(train_data, batch_size=batch_size, drop_last=True, shuffle=True, num_workers=4)
             x_example = torch.zeros(batch_size, max_lenght, n_feature).to(device)
             depth = max_divisor(n_feature, depth_range)
 
@@ -88,7 +88,7 @@ def main():
                         train_loss_values.append(train_loss_value)
 
                         test_data = Data(X_test, Y_test)
-                        test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True, num_workers=4)
+                        test_loader = DataLoader(test_data, batch_size=batch_size, drop_last=True, shuffle=True, num_workers=4)
 
                         # Test loss e accuratezza
                         test_loss = 0.0  # Aggiunge accumulatore per la test loss

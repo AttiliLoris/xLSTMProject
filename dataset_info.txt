@@ -1,0 +1,6 @@
+
+Dataset: Helpdesk.xes
+Numero tracce: 3804
+Numero eventi totali: 21318
+Numero medio di eventi per traccia: 5.60410094637224
+Numero attivita' da predire: 11

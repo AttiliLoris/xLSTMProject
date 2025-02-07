@@ -2,9 +2,9 @@ name: xLSTMProject
 version: 1.0
 train:
   batch_size: [32,64]
-  epochs: 80
-  layers_set_list: ['mmmmm','mmm']
+  epochs: 1
+  layers_set_list: ['s','mmmmm','mmm']
   lr: [0.01, 0.02, 0.001]
   depth_range: [7,6,5,4,3,2,1] #deve essere scritto in ordine decrescente
 dataset:
-  name: BPI12.xes
+  name: Helpdesk.xes

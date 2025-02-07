@@ -151,7 +151,7 @@ def main():
                         print('-' * 40, file=f)
 
                 # Grafico per training e test loss
-                print_plot(epoch, train_loss_values, test_loss_values, batch_size, lr, current_script_dir, layers_set, depth)
+                print_plot(epoch + 1, train_loss_values, test_loss_values, batch_size, lr, current_script_dir, layers_set, depth)
 
 
 if __name__ == '__main__':

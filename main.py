@@ -133,8 +133,7 @@ def main():
                             early_stop_counter += 1  # Incrementa il contatore
 
                         if early_stop_counter >= patience:
-                            epoch = epoch+1
-                            print(f"Early stopping at epoch {epoch}. Best Test Loss: {best_loss:.5f}")
+                            print(f"Early stopping at epoch {epoch+1}. Best Test Loss: {best_loss:.5f}")
                             break
 
 

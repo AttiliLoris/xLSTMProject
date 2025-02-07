@@ -133,8 +133,7 @@ def main():
                             early_stop_counter += 1  # Incrementa il contatore
 
                         if early_stop_counter >= patience:
-                            epoch = epoch+1
-                            print(f"Early stopping at epoch {epoch}. Best Test Loss: {best_loss:.5f}")
+                            print(f"Early stopping at epoch {epoch+1}. Best Test Loss: {best_loss:.5f}")
                             break
 
 
@@ -151,7 +150,7 @@ def main():
                         print('-' * 40, file=f)
 
                 # Grafico per training e test loss
-                print_plot(epoch, train_loss_values, test_loss_values, batch_size, lr, current_script_dir, layers_set, depth)
+                print_plot(epoch + 1, train_loss_values, test_loss_values, batch_size, lr, current_script_dir, layers_set, depth)
 
 
 if __name__ == '__main__':
